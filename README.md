@@ -35,7 +35,7 @@ The analysis is designed to work from evidence present in the candidate's docume
 
 ## 🎯 Product Principles
 
-That's Your Gap follows a few core principles:
+That's Your Gap follows these core principles:
 
 1. **Never fabricate information**
    - No invented achievements
@@ -63,59 +63,39 @@ That's Your Gap follows a few core principles:
 ## 🧠 How It Works
 
 ```text
-                 ┌──────────────────────┐
-                 │        User          │
-                 │                      │
-                 │ LinkedIn PDF         │
-                 │ Resume PDF           │
-                 │ Target Role          │
-                 │ Job Description      │
-                 └──────────┬───────────┘
-                            │
-                            ▼
-                 ┌──────────────────────┐
-                 │    Next.js Frontend  │
-                 └──────────┬───────────┘
-                            │
-                            │ HTTP
-                            ▼
-                 ┌──────────────────────┐
-                 │    FastAPI Backend   │
-                 └──────────┬───────────┘
-                            │
-              ┌─────────────┼─────────────┐
-              │             │             │
-              ▼             ▼             ▼
-        PDF Extraction   Profile      Validation
-        pdfplumber       Parsing      Pydantic
-        pypdf            CandidateFacts
-              │             │
-              └─────────────┼─────────────┘
-                            │
-                            ▼
-                 ┌──────────────────────┐
-                 │   Ollama             │
-                 │   Qwen 3.5 2B       │
-                 │   Local AI           │
-                 └──────────┬───────────┘
-                            │
-                            ▼
-                 ┌──────────────────────┐
-                 │ Career X-Ray Result  │
-                 │ Structured JSON      │
-                 └──────────┬───────────┘
-                            │
-                            ▼
-                 ┌──────────────────────┐
-                 │   Results Dashboard  │
-                 └──────────────────────┘
+User
+ │
+ │ LinkedIn PDF + Resume PDF
+ │ Optional Target Role + Job Description
+ ▼
+Next.js Frontend
+ │
+ │ HTTP
+ ▼
+FastAPI Backend
+ │
+ ├── Upload validation
+ ├── PDF text extraction
+ │     ├── pdfplumber
+ │     └── pypdf fallback
+ ├── Candidate profile parsing
+ │     └── CandidateFacts
+ ├── Local AI analysis
+ │     └── Ollama + Qwen 3.5 2B
+ ├── Structured JSON validation
+ │     └── Pydantic
+ ▼
+That's Your Gap Result
+ │
+ ▼
+Results Dashboard
 ```
 
 ---
 
-# 🛠️ Tech Stack
+## 🛠️ Tech Stack
 
-## Frontend
+### Frontend
 
 - Next.js 14
 - TypeScript
@@ -123,20 +103,20 @@ That's Your Gap follows a few core principles:
 - Framer Motion
 - Lucide Icons
 
-## Backend
+### Backend
 
 - Python 3.13
 - FastAPI
 - Pydantic v2
 - Uvicorn
 
-## Document Processing
+### Document Processing
 
 - pdfplumber
 - pypdf
 - Heuristic text normalization
 
-## AI
+### AI
 
 - Ollama
 - Qwen 3.5 2B
@@ -144,7 +124,7 @@ That's Your Gap follows a few core principles:
 
 ---
 
-# 📁 Project Structure
+## 📁 Project Structure
 
 ```text
 thats-your-gap/
@@ -177,8 +157,7 @@ thats-your-gap/
 │   ├── tests/
 │   ├── requirements.txt
 │   ├── pytest.ini
-│   ├── .env.example
-│   └── .env
+│   └── .env.example
 │
 ├── frontend/
 │   ├── public/
@@ -190,12 +169,6 @@ thats-your-gap/
 │   │   │   └── page.tsx
 │   │   │
 │   │   ├── components/
-│   │   │   ├── AnalyzingState.tsx
-│   │   │   ├── DimensionMeter.tsx
-│   │   │   ├── ResultsReport.tsx
-│   │   │   ├── ScoreDial.tsx
-│   │   │   └── UploadSlot.tsx
-│   │   │
 │   │   └── lib/
 │   │       ├── api.ts
 │   │       └── types.ts
@@ -204,13 +177,14 @@ thats-your-gap/
 │   ├── next.config.js
 │   ├── tailwind.config.js
 │   ├── tsconfig.json
-│   ├── .env.local.example
-│   └── .env.local
+│   └── .env.local.example
 │
 ├── docs/
 ├── .gitignore
 └── README.md
 ```
+
+> Local `.env` and `.env.local` files are intentionally excluded from the repository.
 
 ---
 
@@ -227,7 +201,7 @@ Make sure you have:
 
 ---
 
-# 1. Install Ollama
+## 1. Install Ollama
 
 Install Ollama on your machine.
 
@@ -237,7 +211,7 @@ Verify the installation:
 ollama --version
 ```
 
-If Windows does not recognize the command, Ollama can also be run directly from its installation path:
+If Windows does not recognize the command, you can run Ollama directly from its installation path:
 
 ```powershell
 & "$env:LOCALAPPDATA\Programs\Ollama\ollama.exe" --version
@@ -245,9 +219,9 @@ If Windows does not recognize the command, Ollama can also be run directly from 
 
 ---
 
-# 2. Download Qwen 3.5 2B
+## 2. Download Qwen 3.5 2B
 
-That's Your Gap currently uses the local:
+That's Your Gap currently uses:
 
 ```text
 qwen3.5:2b
@@ -265,9 +239,7 @@ Verify:
 ollama list
 ```
 
-The model should appear in the list.
-
-Ollama normally serves its local API at:
+Ollama normally exposes its local API at:
 
 ```text
 http://localhost:11434
@@ -275,15 +247,15 @@ http://localhost:11434
 
 ---
 
-# 3. Backend Setup
+## 3. Backend Setup
 
-Open a terminal and navigate to the backend:
+Navigate to the backend:
 
 ```powershell
 cd backend
 ```
 
-Create a virtual environment:
+Create a Python virtual environment:
 
 ```powershell
 py -3.13 -m venv .venv
@@ -303,7 +275,7 @@ python -m pip install -r requirements.txt
 
 ---
 
-# 4. Backend Environment Variables
+## 4. Backend Environment Variables
 
 Create:
 
@@ -311,7 +283,7 @@ Create:
 backend/.env
 ```
 
-Example configuration:
+Use the following configuration:
 
 ```env
 LLM_PROVIDER=ollama
@@ -333,13 +305,11 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000
 LOG_LEVEL=INFO
 ```
 
-> **Never commit `backend/.env` to GitHub.**
-
-The `.gitignore` file already excludes it.
+**Do not commit `backend/.env` to GitHub.**
 
 ---
 
-# 5. Start the Backend
+## 5. Start the Backend
 
 From the `backend` directory:
 
@@ -361,7 +331,7 @@ http://localhost:8000/api/health
 
 ---
 
-# 6. Frontend Setup
+## 6. Frontend Setup
 
 Open a second terminal:
 
@@ -389,7 +359,7 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 
 ---
 
-# 7. Start the Frontend
+## 7. Start the Frontend
 
 Run:
 
@@ -407,15 +377,13 @@ http://localhost:3000
 
 # 📄 Using the Application
 
-1. Open the website.
+1. Open the application.
 2. Upload your LinkedIn profile PDF.
 3. Upload your resume PDF.
 4. Optionally enter a target role.
 5. Optionally paste a job description.
 6. Start the analysis.
 7. Review the generated career diagnostic.
-
-LinkedIn profiles can be exported as PDF using LinkedIn's profile PDF export option.
 
 ---
 
@@ -436,11 +404,11 @@ Ollama
 Qwen 3.5 2B
 ```
 
-The model receives structured candidate information and returns structured JSON.
+The backend sends structured candidate information to the model and expects structured JSON in return.
 
-The backend validates the response using Pydantic before returning the result to the frontend.
+The returned JSON is validated using Pydantic before it reaches the frontend.
 
-Malformed AI responses are rejected rather than silently passed to the UI.
+Malformed AI responses are rejected instead of being silently passed through.
 
 ---
 
@@ -450,7 +418,7 @@ The current MVP does not use a database.
 
 Uploaded documents are processed during the analysis request and are not stored as persistent user records.
 
-The current AI inference uses Ollama locally during development.
+The current AI inference runs locally through Ollama during local development.
 
 No Anthropic API key is required for the current implementation.
 
@@ -458,7 +426,7 @@ No Anthropic API key is required for the current implementation.
 
 # 📊 Diagnostic Scores
 
-That's Your Gap currently generates six diagnostic signals:
+That's Your Gap generates six diagnostic signals:
 
 | Signal | Description |
 |---|---|
