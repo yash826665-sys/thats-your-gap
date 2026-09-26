@@ -287,7 +287,6 @@ Use the following configuration:
 
 ```env
 LLM_PROVIDER=ollama
-ANTHROPIC_API_KEY=
 LLM_MODEL=qwen3.5:2b
 
 LLM_MAX_OUTPUT_TOKENS=4000
